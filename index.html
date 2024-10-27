@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Praxis Security - Coming Soon</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+
+  <style>
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      25% {
+        transform: translate(-5px, 15px) rotate(2deg);
+      }
+
+      50% {
+        transform: translate(0, -5px) rotate(0deg);
+      }
+
+      75% {
+        transform: translate(5px, 15px) rotate(-2deg);
+      }
+
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+    }
+
+    /* Add different animation durations for variety */
+    .float-slow {
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .float-medium {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .float-fast {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    /* Remove the old floating-icon class and update icons to use new classes */
+    .confidence-particles {
+      background: linear-gradient(45deg,
+          rgba(255, 247, 237, 0.3) 0%,
+          rgba(254, 215, 170, 0.1) 100%);
+      filter: blur(80px);
+    }
+
+    .confidence-particles::before,
+    .confidence-particles::after {
+      content: '';
+      position: absolute;
+      width: 40vw;
+      height: 40vw;
+      border-radius: 50%;
+      opacity: 0.4;
+    }
+
+    .confidence-particles::before {
+      background: radial-gradient(circle, rgba(255, 166, 0, 0.2) 0%, transparent 70%);
+      top: 10%;
+      left: 20%;
+      animation: floatGlow 15s ease-in-out infinite;
+    }
+
+    .confidence-particles::after {
+      background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+      bottom: 20%;
+      right: 10%;
+      animation: floatGlow 18s ease-in-out infinite reverse;
+    }
+
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.1;
+    }
+
+    /* Add these new styles */
+    #vanta-globe {
+      position: fixed;
+      /* Changed from absolute to fixed */
+      right: -20%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 140vw;
+      height: 140vh;
+      pointer-events: none;
+      opacity: 0.6;
+      /* Increased opacity */
+      z-index: 8;
+      /* Adjusted z-index */
+    }
+
+    /* Adjust floating icons to take less space */
+    .floating-icons-container {
+      transform: translateX(-10%);
+      /* Less shift to the left */
+      width: 60%;
+      /* Constrain icons to left side */
+      z-index: 5;
+    }
+
+    /* Ensure the text content stays on top */
+    .relative.container {
+      position: relative;
+      z-index: 20;
+      /* Higher than the globe */
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-white overflow-x-hidden">
+  <!-- Background Effects -->
+  <div class="confidence-particles fixed inset-0 -z-5 pointer-events-none"></div>
+  <div id="canvas-container"></div>
+  <div id="vanta-globe"></div> <!-- Add this line -->
+
+  <!-- Main Content -->
+  <div class="relative overflow-hidden">
+    <!-- Diagonal background -->
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-yellow-100 via-orange-50 to-gray-50 -skew-y-6 origin-top-left transform-gpu">
+    </div>
+
+    <!-- Floating Icons -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none floating-icons-container hidden md:block">
+      <i data-lucide="shield-check" class="float-medium absolute w-24 h-24 text-orange-400/70 top-[8%] left-[12%]"></i>
+      <i data-lucide="database" class="float-slow absolute w-24 h-24 text-orange-400/70 top-[15%] left-[28%]"
+        style="animation-delay: 0.5s"></i>
+      <i data-lucide="hard-drive" class="float-fast absolute w-24 h-24 text-orange-400/70 top-[5%] left-[40%]"
+        style="animation-delay: 1s"></i>
+      <i data-lucide="globe-2" class="float-medium absolute w-20 h-20 text-purple-400/60 top-[32%] left-[8%]"
+        style="animation-delay: 1.5s"></i>
+      <i data-lucide="cpu" class="float-slow absolute w-20 h-20 text-purple-400/60 top-[38%] right-[25%]"
+        style="animation-delay: 2s"></i>
+      <i data-lucide="lock" class="float-fast absolute w-24 h-24 text-orange-400/70 top-[25%] right-[15%]"
+        style="animation-delay: 2.5s"></i>
+      <i data-lucide="server" class="float-medium absolute w-20 h-20 text-purple-400/60 top-[45%] left-[35%]"
+        style="animation-delay: 3s"></i>
+      <i data-lucide="shield" class="float-slow absolute w-24 h-24 text-orange-400/70 bottom-[20%] left-[18%]"
+        style="animation-delay: 3.5s"></i>
+      <i data-lucide="wifi" class="float-fast absolute w-20 h-20 text-purple-400/60 bottom-[35%] right-[30%]"
+        style="animation-delay: 4s"></i>
+      <i data-lucide="key" class="float-medium absolute w-24 h-24 text-orange-400/70 bottom-[15%] right-[12%]"
+        style="animation-delay: 4.5s"></i>
+      <i data-lucide="cloud" class="float-slow absolute w-20 h-20 text-purple-400/60 top-[12%] right-[38%]"
+        style="animation-delay: 5s"></i>
+      <i data-lucide="code" class="float-fast absolute w-24 h-24 text-orange-400/70 bottom-[28%] left-[25%]"
+        style="animation-delay: 5.5s"></i>
+      <i data-lucide="settings" class="float-medium absolute w-20 h-20 text-purple-400/60 top-[28%] right-[42%]"
+        style="animation-delay: 6s"></i>
+      <i data-lucide="fingerprint" class="float-slow absolute w-24 h-24 text-orange-400/70 bottom-[40%] right-[20%]"
+        style="animation-delay: 6.5s"></i>
+      <i data-lucide="layers" class="float-fast absolute w-20 h-20 text-purple-400/60 top-[42%] left-[22%]"
+        style="animation-delay: 7s"></i>
+    </div>
+
+    <!-- Content -->
+    <div
+      class="relative container mx-auto px-4 py-20 min-h-screen flex flex-col items-center justify-center text-center">
+      <!-- Name -->
+      <div class="flex flex-col items-center space-y-4">
+        <div class="flex flex-col items-center space-y-3">
+          <span
+            class="text-6xl sm:text-7xl md:text-9xl lg:text-[12rem] font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight">
+            PraxSec
+          </span>
+          <span
+            class="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight opacity-80">
+            Praxis SOC
+          </span>
+          <span
+            class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight opacity-60">
+            Praxis Audit
+          </span>
+          <span
+            class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight opacity-40">
+            Praxis Sentinel
+          </span>
+          <span
+            class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight opacity-30">
+            Praxis Monitor
+          </span>
+          <span
+            class="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight opacity-20">
+            Praxis Chat
+          </span>
+          <span
+            class="text-lg sm:text-xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight opacity-15">
+            Praxis Suite
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add this Vanta.js initialization code
+    VANTA.GLOBE({
+      el: "#vanta-globe",
+      mouseControls: false,
+      touchControls: false,
+      gyroControls: false,
+      minHeight: 200,
+      minWidth: 200,
+      scale: 1.0,
+      scaleMobile: 1.0,
+      color: 0xff8c42,
+      color2: 0xffd700,
+      backgroundColor: 0xffffff,
+      size: 2.0,
+      points: 20.00,
+      maxDistance: 25.00,
+      spacing: 18.00,
+      showDots: true
+    });
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>
