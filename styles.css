@@ -1,0 +1,28 @@
+:root {
+  color-scheme: dark;
+  background: #141714;
+  color: #dbc99f;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+.experience { position: relative; height: 100svh; min-height: 560px; overflow: hidden; isolation: isolate; }
+.signature { position: absolute; z-index: 2; left: 42px; top: 32px; pointer-events: none; }
+h1 { font-weight: 400; font-size: 32px; letter-spacing: -.065em; line-height: 1; margin: 0; }
+.dedication { position: absolute; z-index: 2; right: 42px; bottom: 36px; margin: 0; font-size: 12px; letter-spacing: .005em; pointer-events: none; }
+.score { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#inscription { width: 100%; height: 100%; display: block; overflow: hidden; }
+.carving { fill: none; stroke: #141714; stroke-linecap: round; }
+#artifact { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
+.rendered #artifact { visibility: visible; }
+.rendered .static-panels { display: none; }
+.evidence { color: #e7d3a5; opacity: .3; }
+.observed .evidence { opacity: .65; }
+::selection { background: #c8b485; color: #141714; }
+@media(max-width:700px) {
+  .signature { top: 29px; left: 24px; }
+  h1 { font-size: 28px; }
+  .dedication { right: 24px; bottom: 34px; font-size: 11px; }
+}

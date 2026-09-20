@@ -3,49 +3,25 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f5f4f0">
-    <title>praxsec</title>
-    <style>
-      :root {
-        color-scheme: light;
-        background: #f5f4f0;
-        color: #191a18;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-      }
-
-      main {
-        display: grid;
-        min-height: 100vh;
-        min-height: 100svh;
-        place-items: center;
-        padding: 24px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: clamp(48px, 10vw, 112px);
-        font-weight: 500;
-        letter-spacing: -0.065em;
-        line-height: 1.1;
-      }
-
-      ::selection {
-        background: #191a18;
-        color: #f5f4f0;
-      }
-    </style>
+    <meta name="theme-color" content="#141714">
+    <meta name="description" content="Praxsec — for an alien mind">
+    <title>Praxsec — for an alien mind</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <script src="score.js" defer></script>
   </head>
   <body>
-    <main>
-      <h1>praxsec</h1>
+    <main class="experience" id="beginning">
+      <header class="signature"><h1>Praxsec</h1></header>
+      <div id="score" class="score" aria-hidden="true">
+        <svg id="inscription" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" aria-hidden="true">
+          <g fill="none" stroke="#c6ae78" stroke-width="15" transform="rotate(-12 800 450)">
+            <path d="M-200 282H730m140 0H1800M-200 306H720m160 0H1800M-200 330H711m178 0H1800M-200 354H704m192 0H1800M-200 378H699m202 0H1800M-200 402H695m210 0H1800M-200 426H693m214 0H1800M-200 450H692m216 0H1800M-200 474H693m214 0H1800M-200 498H695m210 0H1800M-200 522H699m202 0H1800M-200 546H704m192 0H1800M-200 570H711m178 0H1800M-200 594H720m160 0H1800M-200 618H730m140 0H1800"/>
+          </g>
+        </svg>
+        <canvas id="artifact"></canvas>
+      </div>
+      <p class="dedication">for an alien mind</p>
     </main>
   </body>
 </html>
