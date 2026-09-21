@@ -1,55 +1,121 @@
 # Praxsec — for an alien mind
 
-The existing composition is retained: the same dark background, small Praxsec
-name, dedication, two gold striped panels, and central marks. Only the panels'
-geometry and motion change. There are no controls, pointer responses, hover
-effects, or additional visible words.
+A quiet typographic teaser with black, dithered liquid on a pale background.
+Primary text and the favicon use charcoal (`#252823`); the second headline and
+footer use muted ink (`#6b7065`). The liquid uses deep black (`#000000`) on paper
+(`#f7f7f2`), with its apparent tones coming only from dither density.
+The page presents **Praxsec**, **Verifiable exploits**, **oracle-based remediation**,
+and **for an alien mind**. These phrases describe the intended product direction;
+the page is not an Oracle interface or a claim that verification is available.
 
-## Local preview
+## Liquid
+
+`fluid.mjs` implements a small three-dimensional particle fluid, using the density
+constraint approach in [Position Based Fluids, Macklin and Müller (2013)](https://mmacklin.com/pbf_sig_preprint.pdf).
+A spatial hash builds local neighborhoods. Four density-projection iterations,
+pairwise cohesion, and viscosity update the shared liquid at a fixed 60 Hz.
+There is no gravity, prescribed droplet shape, animated radius, or painted ripple.
+Stretching, neck formation, separation, pressure disturbances, and coalescence
+come from moving the fluid particles and reconstructing their common surface.
+Particles persist throughout a transfer: material is neither spawned nor faded.
+
+This is a coarse, visually tuned fluid model, not a calibrated simulation of water.
+The deterministic seed is a smooth union of three unequal lobes per body, with
+small initial circulation. A hidden 60-step settling pass runs once before the
+first visible frame, including for reduced motion. Startup therefore displays an
+already composed, moving fluid state rather than exposing lattice relaxation.
+Weak, slowly shifting three-center confinement and stirring keep the lobed
+composition alive; this is an artistic force, not a closed zero-gravity system.
+A small external force guides a selected parcel toward the type and then around
+it to the other body. Forces act on the parcel's center of mass; its particles
+remain free to deform and exchange momentum with their neighbors. During initial
+pulling, a reaction force acts on the donor. These artistic controls keep the
+scene active; the webpage is not an isolated physical system.
+
+The text remains native HTML. A hidden distance grid is built from the actual
+letter shapes on layout changes. Individual fluid particles resolve contact
+against that grid without explicit bounce restitution. Density and cohesion
+supply the liquid's response. Wrapped mobile text uses the same contact model.
+
+`fluid-renderer.mjs` projects the particles into a continuous silhouette and
+smooths its coverage before applying a hard boundary. `fluid-shading.mjs` finds
+connected projected bodies on a padded grid, including material outside the
+viewport. Each body gets the same smooth, rounded shading frame lit from the top
+left. The frame follows its continuous bounds; depth and velocity do not affect
+its shading. There are no individual particle normals or volume-density lighting.
+
+A per-body cumulative tone distribution maps this canonical lighting to a shared
+ink ramp. Light, middle, and dark tone ranges each cover approximately one third
+of a full body, regardless of its size, deformation, or amount of material. Split
+bodies eventually normalize independently and rejoining material shares a frame.
+Particle membership detects splits and merges. During that handoff, lighting is
+reprojected with particle displacement and eased into the new tonal map over up
+to 2.4 seconds. A tapering response returns to the common tonal balance without
+snapping at the end; near-contact split/merge fluctuations retain continuity.
+Small rasterization differences remain at contours and on tiny droplets. Clipping
+at a viewport edge does not change the complete body's tonal balance.
+
+The Bayer grid uses chunky **4 × 4 CSS-pixel cells**, anchored at the top left.
+Its pitch is independent of device pixel ratio, viewport resolution, and the
+adaptive fluid-surface buffer. The canvas displays each output texel at exactly
+four CSS pixels using nearest-neighbor scaling. A fixed, clipped wrapper absorbs
+up to three surplus pixels on odd-sized viewports without stretching the grid or
+introducing scroll overflow. The wrapper supplies layout dimensions so repeated
+resizes cannot grow the canvas. Browser zoom still scales CSS pixels normally.
+
+Each dither cell remembers its binary ink state. A 3% threshold tolerance rejects
+small reversals; a larger requested change must persist for 120 ms before the
+cell switches. This rejects momentary shading fluctuations without resampling the
+grid, averaging black and white, or freezing the lighting. Current coverage clears
+state outside the silhouette immediately. Newly covered cells initialize from
+current shading; resize and context restoration reset all cell state.
+
+Every interior pixel is opaque black or paper-colored; only the exterior is
+transparent. Shape reconstruction and tonal mapping happen before dithering and
+never soften the visible dots. Lighting is transported during a topology handoff;
+the silhouette and native-text contact still follow the current simulation.
+
+## Runtime and accessibility
+
+No dependencies, external fonts, analytics, pointer-driven animation, or data sources.
+The page uses WebGL 2 with three single-channel 8-bit coverage targets, a bounded
+CPU silhouette grid, a small tonal texture, and two 8-bit RGBA buffers for dither
+state. It does not need floating-point render targets. Surface reconstruction is capped at 360,000
+pixels independently of the final fixed-pitch dither buffer, with a 30 fps cap.
+Simulation steps use a bounded catch-up budget.
+Hidden pages stop; reduced-motion preferences show a still frame. Resize rebuilds
+the fluid for the new layout. Context restoration rebuilds the renderer and retains
+the fluid state. Unsupported graphics leave the plain, readable page.
+
+The phrase “for an alien mind” sits at the lower right in small, lightly spaced
+system monospace type, as a quiet signature.
+A small contact control at the lower left reveals a mail link only on activation.
+The address is encoded in `contact.js` and absent from the initial DOM; this deters
+basic harvesting, not browser automation. Keyboard activation preserves focus on
+the revealed link. Contact works independently of WebGL; JavaScript is required.
+Mailbox provisioning and spam filtering are managed outside this repository.
+The native lowercase “oracle” matches its surrounding text. The phrase
+“oracle-based” stays together on wrapping. High contrast and forced colors retain
+readable text. There is no footer rule or extra explanatory interface.
+
+Desktop and mobile viewport rendering are checked locally. Viewport checks are
+not measurements on a physical mobile device; device power use remains unmeasured.
+
+## Local preview and validation
 
 ```sh
 python3 -m http.server 8765 --bind 127.0.0.1
+node --test fluid.test.mjs fluid-shading.test.mjs
 ```
 
-Open <http://127.0.0.1:8765/>. No dependencies, build step, remote fonts,
-analytics, images, or API requests are needed. The existing Pages workflow
-publishes `main` to the public teaser site.
+Open <http://127.0.0.1:8765/>. The tests exercise complete release/contact/reunion
+cycles, density bounds, particle-count preservation, collision clearance, reused
+transfer slots, and a single-body layout. Shading checks cover tonal balance across
+size, asymmetric deformation, scale, translation, depth, viewport clipping,
+detachment, and reunion, without modifying simulation positions. Additional checks
+exercise tonal continuity through an actual split/rejoin sequence, convergence
+back to the shared balance, and the idempotent pre-render settling pass.
 
-## Physical structure and motion
-
-Each panel contains 23 solid ribbons, with front, rear, side, and end faces.
-Ribbons retain their 14-unit breadth and 24-unit pitch, with 12 units of depth.
-Perspective, visible side faces, occlusion, and restrained diffuse shading
-establish their volume. Their original inscriptions stay attached to the
-front surfaces; the central marks remain stationary.
-
-The left panel rotates primarily about Y and the right primarily about X,
-using independent angular ranges up to 30 degrees. Their main cycles are
-approximately 84.85 and 103.92 seconds, with offset phases chosen to make the
-perspective change apparent during the first 5–10 seconds. The two panels
-approach and recede independently while retaining their place in the composition.
-
-A modulated strain front travels through each mesh, bending its actual depth
-and slightly compressing the spacing between neighboring ribbons. Different
-travel directions, phases, main periods, and secondary drift periods avoid
-synchronized movement and a shared animation reset. No brightness sweep,
-particles, bloom, or specular glow is used.
-
-The inscriptions and three-state marks are synthetic artistic conventions,
-not live product inputs, verification results, or security claims.
-
-## Rendering
-
-A dependency-free WebGL 2 renderer uploads two solid meshes once. There are
-53,544 vertices in total, with 48 segments per ribbon. Each rendered frame
-updates uniforms and submits two depth-tested draws. Geometry deformation runs
-in the vertex shader; there are no per-frame DOM changes or mesh uploads.
-
-Rendering is capped at 30 frames per second. The backing buffer is capped at
-1.5 device pixels per CSS pixel and 2.4 million pixels total. Native CSS text
-retains its normal rendering. Actual device power consumption is unmeasured.
-
-Hidden pages suspend rendering while preserving elapsed time. Reduced-motion
-preferences retain a static pose. Resize preserves motion phase. A WebGL
-failure or context loss restores the original SVG composition; context
-restoration rebuilds the renderer. An inline still also remains without JavaScript.
+GitHub Pages publishes `main` to <https://praxsec.com/> through the existing
+deployment workflow. Keep new iterations local until publication is explicitly
+requested.

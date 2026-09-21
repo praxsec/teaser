@@ -1,28 +1,117 @@
 :root {
-  color-scheme: dark;
-  background: #141714;
-  color: #dbc99f;
+  --ink: #252823;
+  --muted-ink: #6b7065;
+  --paper: #f7f7f2;
+  color-scheme: light;
+  color: var(--ink);
+  background: var(--paper);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 }
 * { box-sizing: border-box; }
 body { margin: 0; }
-.experience { position: relative; height: 100svh; min-height: 560px; overflow: hidden; isolation: isolate; }
-.signature { position: absolute; z-index: 2; left: 42px; top: 32px; pointer-events: none; }
-h1 { font-weight: 400; font-size: 32px; letter-spacing: -.065em; line-height: 1; margin: 0; }
-.dedication { position: absolute; z-index: 2; right: 42px; bottom: 36px; margin: 0; font-size: 12px; letter-spacing: .005em; pointer-events: none; }
-.score { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-#inscription { width: 100%; height: 100%; display: block; overflow: hidden; }
-.carving { fill: none; stroke: #141714; stroke-linecap: round; }
-#artifact { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
-.rendered #artifact { visibility: visible; }
-.rendered .static-panels { display: none; }
-.evidence { color: #e7d3a5; opacity: .3; }
-.observed .evidence { opacity: .65; }
-::selection { background: #c8b485; color: #141714; }
-@media(max-width:700px) {
-  .signature { top: 29px; left: 24px; }
-  h1 { font-size: 28px; }
-  .dedication { right: 24px; bottom: 34px; font-size: 11px; }
+.liquid-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+#metaballs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  image-rendering: pixelated;
+  visibility: hidden;
+}
+#metaballs.is-ready { visibility: visible; }
+.page {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: min(calc(100% - clamp(48px, 11.11vw, 160px)), 1280px);
+  min-height: 100svh;
+  margin-inline: auto;
+}
+.masthead { padding-block: clamp(30px, 2.92vw, 42px); }
+.wordmark {
+  margin: 0;
+  font-size: clamp(25px, 1.875vw, 27px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -.065em;
+}
+.statement {
+  display: flex;
+  align-items: center;
+  padding-block: clamp(70px, 6.25vw, 90px) clamp(110px, 9.03vw, 130px);
+}
+h1 {
+  margin: 0;
+  font-size: clamp(34px, calc(18px + 4vw), 76px);
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: -.048em;
+  -webkit-text-stroke: 4px var(--paper);
+  paint-order: stroke fill;
+}
+h1 > span { display: block; }
+h1 > span + span { color: var(--muted-ink); }
+.oracle-phrase { white-space: nowrap; }
+.colophon {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 23px 31px;
+}
+.colophon p {
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: .035em;
+  color: var(--muted-ink);
+}
+#contact { white-space: nowrap; }
+#contact button, #contact a {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+#contact button::after, #contact a::after {
+  content: "";
+  position: absolute;
+  inset: -14px -4px;
+}
+#contact button:focus-visible, #contact a:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 5px;
+}
+::selection { background: #dce1d1; color: var(--ink); }
+@media (max-width: 700px) {
+  h1 { line-height: 1.13; letter-spacing: -.045em; }
+  h1 > span + span { margin-top: .22em; max-width: 12em; }
+  .colophon { padding-block: 20px 26px; }
+}
+@media (max-height: 500px) {
+  .masthead { padding-block: 24px; }
+  .statement { padding-block: 40px 55px; }
+  .colophon { padding-block: 16px 20px; }
+}
+@media (prefers-contrast: more), (forced-colors: active) {
+  h1 > span + span, .colophon p { color: var(--ink); }
 }
