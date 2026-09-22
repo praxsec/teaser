@@ -9,6 +9,7 @@ import { FluidRenderer } from './fluid-renderer.mjs?v=deep-dither-13';
   const mix = (a, b, t) => a + (b - a) * t;
   let renderer, fluid, width = 0, height = 0, textField;
   let raf = 0, clock = 0, accumulator = 0, lastDraw = -Infinity, lost = false;
+  let entered = false;
   function fail(error) {
     canvas.classList.remove('is-ready');
     cancelAnimationFrame(raf); raf = 0;
@@ -107,8 +108,24 @@ import { FluidRenderer } from './fluid-renderer.mjs?v=deep-dither-13';
   }
   function draw() {
     if (!renderer || !fluid || lost) return;
-    renderer.draw(fluid); canvas.classList.add('is-ready');
+    renderer.draw(fluid);
+    if (!entered) {
+      entered = true;
+      if (!reduced.matches) {
+        // Start with the entire seeded surface beyond the right edge. The
+        // entrance starts only after a real frame exists, regardless of download time.
+        let left = width;
+        for (let i = 0; i < fluid.count; i++) left = Math.min(left, fluid.positions[i * 3] * fluid.unit);
+        const distance = Math.ceil((width - left + fluid.unit * 2 + 8) / 4) * 4;
+        canvas.style.setProperty('--arrival-distance', `${distance}px`);
+        canvas.classList.add('is-entering');
+      }
+    }
+    canvas.classList.add('is-ready');
   }
+  const finishEntrance = () => canvas.classList.remove('is-entering');
+  canvas.addEventListener('animationend', finishEntrance);
+  canvas.addEventListener('animationcancel', finishEntrance);
   function frame(now) {
     raf = 0;
     if (lost || document.hidden || reduced.matches) return;
@@ -135,11 +152,12 @@ import { FluidRenderer } from './fluid-renderer.mjs?v=deep-dither-13';
     catch (error) { fail(error); }
   });
   document.addEventListener('visibilitychange', sync);
-  reduced.addEventListener('change', sync);
+  reduced.addEventListener('change', () => { if (reduced.matches) finishEntrance(); sync(); });
   window.addEventListener('pagehide', () => { cancelAnimationFrame(raf); raf = 0; clock = 0; });
   window.addEventListener('pageshow', sync);
   let resizeTimer;
   window.addEventListener('resize', () => {
+    finishEntrance();
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => { try { layout(); } catch (error) { fail(error); } }, 120);
   }, { passive: true });

@@ -29,6 +29,17 @@ body { margin: 0; }
   visibility: hidden;
 }
 #metaballs.is-ready { visibility: visible; }
+#metaballs.is-entering {
+  animation: liquid-arrival 700ms cubic-bezier(.22, 1, .36, 1) both;
+  will-change: transform;
+}
+@keyframes liquid-arrival {
+  from { transform: translateX(var(--arrival-distance)); }
+  to { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #metaballs.is-entering { animation: none; }
+}
 .page {
   position: relative;
   z-index: 1;

@@ -83,6 +83,15 @@ CPU silhouette grid, a small tonal texture, and two 8-bit RGBA buffers for dithe
 state. It does not need floating-point render targets. Surface reconstruction is capped at 360,000
 pixels independently of the final fixed-pitch dither buffer, with a 30 fps cap.
 Simulation steps use a bounded catch-up budget.
+The fluid sources ship as one deferred classic script, `metaballs.bundle.js`,
+to avoid a serial import download chain and support direct `file://` previews in
+Chrome without module CORS failures. Once the first seeded frame is rendered, the canvas enters
+from beyond the right edge over 700 ms with an ease-out. The entrance is a single
+compositor transform: no extra fluid steps, faded dots, or loading placeholder.
+It runs once per page load, skips reduced motion, and does not replay on resize,
+tab return, or graphics-context recovery. The page remains readable while the
+animation code downloads; this makes its arrival intentional rather than hiding
+the network wait or delaying the text.
 Hidden pages stop; reduced-motion preferences show a still frame. Resize rebuilds
 the fluid for the new layout. Context restoration rebuilds the renderer and retains
 the fluid state. Unsupported graphics leave the plain, readable page.
@@ -104,9 +113,17 @@ not measurements on a physical mobile device; device power use remains unmeasure
 ## Local preview and validation
 
 ```sh
+node scripts/build-site.mjs
 python3 -m http.server 8765 --bind 127.0.0.1
 node --test fluid.test.mjs fluid-shading.test.mjs
+node scripts/build-site.mjs --check
 ```
+
+After changing the fluid sources, regenerate the checked-in bundle. The small
+build script uses only Node built-ins and updates the HTML's content-hashed script
+URL. Pages checks freshness before deploying. Edit the source modules, not the
+generated bundle. Opening `index.html` directly also works; HTTP preview remains
+useful for checking the site's normal hosted behavior.
 
 Open <http://127.0.0.1:8765/>. The tests exercise complete release/contact/reunion
 cycles, density bounds, particle-count preservation, collision clearance, reused
